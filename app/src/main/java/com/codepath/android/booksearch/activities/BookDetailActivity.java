@@ -1,5 +1,6 @@
 package com.codepath.android.booksearch.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -9,8 +10,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
+import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,23 +32,26 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+
+
 public class BookDetailActivity extends ActionBarActivity {
     private ImageView ivBookCover;
     private TextView tvTitle;
     private TextView tvAuthor;
-    private TextView tvPublisher;
+    private TestEditText tvPublisher;
     private TextView tvPageCount;
     private BookClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_book_detail);
         // Fetch views
         ivBookCover = (ImageView) findViewById(R.id.ivBookCover);
         tvTitle = (TextView) findViewById(R.id.tvTitle);
         tvAuthor = (TextView) findViewById(R.id.tvAuthor);
-        tvPublisher = (TextView) findViewById(R.id.tvPublisher);
+        tvPublisher = (TestEditText) findViewById(R.id.tvPublisher);
         tvPageCount = (TextView) findViewById(R.id.tvPageCount);
         // Use the book to populate the data into our views
         Book book = (Book) getIntent().getSerializableExtra(BookListActivity.BOOK_DETAIL_KEY);
@@ -60,6 +66,9 @@ public class BookDetailActivity extends ActionBarActivity {
         Picasso.with(this).load(Uri.parse(book.getLargeCoverUrl())).error(R.drawable.ic_nocover).into(ivBookCover);
         tvTitle.setText(book.getTitle());
         tvAuthor.setText(book.getAuthor());
+
+
+
         // fetch extra book data from books API
         client = new BookClient();
         client.getExtraBookDetails(book.getOpenLibraryId(), new JsonHttpResponseHandler() {

@@ -25,6 +25,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import com.amazonaws.mobile.client.AWSMobileClient;
+import com.amazonaws.mobileconnectors.pinpoint.PinpointManager;
+import com.amazonaws.mobileconnectors.pinpoint.PinpointConfiguration;
+
 
 public class BookListActivity extends ActionBarActivity {
     public static final String BOOK_DETAIL_KEY = "book";
@@ -33,9 +37,26 @@ public class BookListActivity extends ActionBarActivity {
     private BookClient client;
     private ProgressBar progress;
 
+    public static PinpointManager pinpointManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        AWSMobileClient.getInstance().initialize(this).execute();
+
+        PinpointConfiguration pinpointConfig = new PinpointConfiguration(
+                getApplicationContext(),
+                AWSMobileClient.getInstance().getCredentialsProvider(),
+                AWSMobileClient.getInstance().getConfiguration());
+
+        pinpointManager = new PinpointManager(pinpointConfig);// Start a session with Pinpoint
+        pinpointManager.getSessionClient().startSession();
+
+        // Stop the session and submit the default app started event
+        pinpointManager.getSessionClient().stopSession();
+        pinpointManager.getAnalyticsClient().submitEvents();
+
         setContentView(R.layout.activity_book_list);
         lvBooks = (ListView) findViewById(R.id.lvBooks);
         ArrayList<Book> aBooks = new ArrayList<Book>();
